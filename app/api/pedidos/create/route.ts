@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
       inclui_almoco,
     } = body;
 
-    // Validações básicas
+    // 🔒 Validações básicas
     if (
       !nome ||
       !idade ||
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Buscar lote ativo
+    // 🔒 Buscar lote ativo
     const { data: configData, error: configError } = await supabase
       .from("config_sistema")
       .select("valor")
@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (configError || !configData) {
-      console.error("Erro ao buscar lote ativo:", configError);
+      console.error("❌ Erro ao buscar lote ativo:", configError);
       return NextResponse.json(
         { error: "Erro ao buscar configuração do sistema" },
         { status: 500 }
@@ -48,16 +48,16 @@ export async function POST(request: NextRequest) {
 
     const loteAtivo = parseInt(configData.valor);
 
-    // Buscar configurações do lote ativo de config_sistema
+    // 🔒 Buscar configurações de preço do lote ativo
     const { data: configsData, error: configsError } = await supabase
       .from("config_sistema")
       .select("chave, valor")
       .or(
-        `chave.eq.lote_${loteAtivo}_preco_base,chave.eq.lote_${loteAtivo}_preco_almoco,chave.eq.lote_${loteAtivo}_checkout_url`
+        `chave.eq.lote_${loteAtivo}_preco_base,chave.eq.lote_${loteAtivo}_preco_almoco`
       );
 
     if (configsError || !configsData || configsData.length === 0) {
-      console.error("Erro ao buscar configuração do lote:", configsError);
+      console.error("❌ Erro ao buscar configuração do lote:", configsError);
       return NextResponse.json(
         { error: "Erro ao buscar configuração do lote" },
         { status: 500 }
@@ -65,53 +65,84 @@ export async function POST(request: NextRequest) {
     }
 
     // Montar objeto de configuração do lote
-    const loteConfig: any = { numero_lote: loteAtivo };
+    let precoBase = 0;
+    let precoAlmoco = 0;
+
     configsData.forEach((config) => {
       if (config.chave.includes("preco_base")) {
-        loteConfig.preco_base = parseFloat(config.valor);
+        precoBase = parseFloat(config.valor);
       } else if (config.chave.includes("preco_almoco")) {
-        loteConfig.preco_almoco = parseFloat(config.valor);
-      } else if (config.chave.includes("checkout_url")) {
-        loteConfig.checkout_url = config.valor;
+        precoAlmoco = parseFloat(config.valor);
       }
     });
 
-    // 🔒 VALIDAÇÃO DE SEGURANÇA: Verificar se configurações estão completas
-    if (
-      !loteConfig.preco_base ||
-      !loteConfig.preco_almoco ||
-      !loteConfig.checkout_url
-    ) {
-      console.error("Configuração do lote incompleta:", loteConfig);
+    // 🔒 VALIDAÇÃO DE SEGURANÇA: Verificar se preços estão configurados
+    if (!precoBase || !precoAlmoco) {
+      console.error("❌ Configuração de preço incompleta:", {
+        precoBase,
+        precoAlmoco,
+      });
       return NextResponse.json(
         {
           error:
-            "Configuração do lote está incompleta. Contate o administrador.",
+            "Configuração de preço do lote está incompleta. Contate o administrador.",
         },
         { status: 500 }
       );
     }
 
-    // 🔒 VALIDAÇÃO DE SEGURANÇA: Verificar se URL de checkout é válida
-    if (!loteConfig.checkout_url.startsWith("http")) {
-      console.error("URL de checkout inválida:", loteConfig.checkout_url);
-      return NextResponse.json(
-        { error: "URL de checkout não configurada corretamente" },
-        { status: 500 }
-      );
-    }
-
     // 🔒 SEGURANÇA: Calcular valor total APENAS no backend
-    const valorTotal =
-      loteConfig.preco_base + (inclui_almoco ? loteConfig.preco_almoco : 0);
+    const valorTotal = precoBase + (inclui_almoco ? precoAlmoco : 0);
 
     console.log("✅ Pedido validado:", {
       lote: loteAtivo,
+      preco_base: precoBase,
+      preco_almoco: precoAlmoco,
       valor_calculado: valorTotal,
       inclui_almoco,
     });
 
-    // Salvar pedido no Supabase
+    // 🆕 Criar preferência no Mercado Pago ANTES de salvar no banco
+    // Isso evita criar registros órfãos se o pagamento falhar
+    console.log("📞 Criando preferência de pagamento...");
+    const preferenceResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_APP_URL}/api/mercadopago/create-preference`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          pedido_id: `temp_${Date.now()}`, // ID temporário para criar preferência
+          nome,
+          email,
+          valor_total: valorTotal,
+          lote: loteAtivo,
+          inclui_almoco: inclui_almoco || false,
+        }),
+      }
+    );
+
+    if (!preferenceResponse.ok) {
+      const errorData = await preferenceResponse.json();
+      console.error("❌ Erro ao criar preferência:", {
+        status: preferenceResponse.status,
+        statusText: preferenceResponse.statusText,
+        errorData,
+      });
+      return NextResponse.json(
+        {
+          error:
+            errorData.details ||
+            errorData.error ||
+            "Erro ao criar preferência de pagamento",
+        },
+        { status: 500 }
+      );
+    }
+
+    const preference = await preferenceResponse.json();
+    console.log("✅ Preferência criada com sucesso:", preference.id);
+
+    // ✅ Agora sim, salvar pedido no Supabase
     const { data: pedidoData, error: pedidoError } = await supabase
       .from("pedidos")
       .insert([
@@ -132,7 +163,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (pedidoError) {
-      console.error("Erro ao salvar pedido:", pedidoError);
+      console.error("❌ Erro ao salvar pedido:", pedidoError);
       return NextResponse.json(
         {
           error:
@@ -141,18 +172,23 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+    console.log("✅ Pedido criado com sucesso:", {
+      pedido_id: pedidoData.id,
+      lote: loteAtivo,
+      valor_total: valorTotal,
+      preference_id: preference.id,
+    });
 
-    // Retornar checkout URL do lote ativo
     return NextResponse.json({
       success: true,
       pedido_id: pedidoData.id,
-      init_point: loteConfig.checkout_url,
+      init_point: preference.init_point,
       lote: loteAtivo,
       valor_total: valorTotal,
       message: "Pedido criado com sucesso!",
     });
   } catch (error: any) {
-    console.error("Erro ao criar pedido:", error);
+    console.error("❌ Erro ao criar pedido:", error);
 
     return NextResponse.json(
       {

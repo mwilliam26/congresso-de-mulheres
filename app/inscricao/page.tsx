@@ -439,8 +439,24 @@ export default function InscricaoPage() {
                 </div>
               </div>
 
-              <div className="text-center text-xs text-gray-500 mt-4 pt-4 border-t border-blue-200">
-                🔒 Pagamento seguro via Mercado Pago
+              <div className="text-center text-xs text-gray-600 mt-4 pt-4 border-t border-blue-200 space-y-2">
+                <p className="font-semibold text-sm text-gray-700">
+                  🔒 Pagamento Seguro
+                </p>
+                <p className="text-gray-600">
+                  Pagamento processado via{" "}
+                  <span className="font-semibold">Mercado Pago</span>
+                </p>
+                <p className="text-green-700 font-medium">
+                  💳 PIX (Instantâneo) | 📄 Boleto (até 2 dias)
+                </p>
+                <p className="text-gray-500 text-xs">
+                  Você NÃO precisa ter conta no Mercado Pago.
+                  <br />
+                  Pague com{" "}
+                  <span className="font-semibold">qualquer banco</span> de sua
+                  preferência.
+                </p>
               </div>
             </div>
 
@@ -484,6 +500,46 @@ export default function InscricaoPage() {
               </div>
             </div>
 
+            {/* Aviso sobre Métodos de Pagamento */}
+            <div className="bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-200 rounded-lg p-4">
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0">
+                  <svg
+                    className="w-6 h-6 text-green-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-semibold text-gray-800 mb-1">
+                    💡 Como funciona o pagamento:
+                  </p>
+                  <ul className="text-xs text-gray-700 space-y-1">
+                    <li>
+                      ✅ <span className="font-medium">PIX:</span> Pague
+                      instantaneamente com qualquer banco ou app
+                    </li>
+                    <li>
+                      ✅ <span className="font-medium">Boleto:</span> Código de
+                      barras válido em qualquer banco
+                    </li>
+                    <li>
+                      ✅ <span className="font-medium">Não precisa</span> ter
+                      conta no Mercado Pago
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
             {/* Botões */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <button
@@ -521,7 +577,7 @@ export default function InscricaoPage() {
             <div className="flex justify-center items-center gap-6">
               {/* WhatsApp */}
               <a
-                href="https://chat.whatsapp.com/seu-grupo-aqui"
+                href="https://chat.whatsapp.com/IV6CXOqwRsnLxLdPmo5wCJ"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition shadow-md hover:shadow-lg"
@@ -538,7 +594,7 @@ export default function InscricaoPage() {
 
               {/* Instagram */}
               <a
-                href="https://instagram.com/seu-perfil-aqui"
+                href="https://www.instagram.com/congmulherescatolicasitb"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold rounded-lg transition shadow-md hover:shadow-lg"
