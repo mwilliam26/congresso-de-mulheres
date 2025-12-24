@@ -98,6 +98,7 @@ export async function POST(request: NextRequest) {
         failure: `${process.env.NEXT_PUBLIC_APP_URL}/pagamento/falha?pedido_id=${pedido_id}`,
         pending: `${process.env.NEXT_PUBLIC_APP_URL}/pagamento/pendente?pedido_id=${pedido_id}`,
       },
+      auto_return: "all" as const, // Redirecionar automaticamente em todos os casos
       external_reference: pedido_id,
       notification_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/mercadopago/webhook`,
       statement_descriptor: "EVENTO MW",
