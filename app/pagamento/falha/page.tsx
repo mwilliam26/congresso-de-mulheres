@@ -1,9 +1,10 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import Link from "next/link";
 
-export default function PagamentoFalhaPage() {
+function PagamentoFalhaContent() {
   const searchParams = useSearchParams();
   const pedidoId = searchParams.get("pedido_id");
 
@@ -78,5 +79,19 @@ export default function PagamentoFalhaPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PagamentoFalhaPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-rose-100">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600"></div>
+        </div>
+      }
+    >
+      <PagamentoFalhaContent />
+    </Suspense>
   );
 }
