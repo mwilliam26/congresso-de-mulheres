@@ -1,10 +1,10 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 
-export default function PagamentoSucessoPage() {
+function PagamentoSucessoContent() {
   const searchParams = useSearchParams();
   const pedidoId = searchParams.get("pedido_id");
   const [isLoading, setIsLoading] = useState(true);
@@ -82,5 +82,19 @@ export default function PagamentoSucessoPage() {
         </Link>
       </div>
     </div>
+  );
+}
+
+export default function PagamentoSucessoPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-emerald-100">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
+        </div>
+      }
+    >
+      <PagamentoSucessoContent />
+    </Suspense>
   );
 }
