@@ -95,7 +95,7 @@ valor: '1' | '2' | '3'
 ```sql
 numero_lote: 1 | 2 | 3
 preco_base: 40.00 | 50.00 | 60.00
-preco_almoco: 15.00
+preco_almoco: 25.00
 checkout_url: 'https://mpago.la/...'
 ativo: true | false
 ```
@@ -130,7 +130,7 @@ Formulário → API /api/pedidos/create
              ↓
 API busca lote ativo (2)
 API busca config do lote 2
-API calcula: R$ 50 (base) + R$ 15 (almoço) = R$ 65
+API calcula: R$ 50 (base) + R$ 25 (almoço) = R$ 75
 API retorna: checkout_url do lote 2
              ↓
 Frontend redireciona para Mercado Pago
@@ -172,19 +172,19 @@ Admin vê pedido com status "Pago"
 
 ```
 Inscrição: R$ 40
-Almoço: R$ 15
+Almoço: R$ 25
 Total sem almoço: R$ 40
-Total com almoço: R$ 55... espera!
+Total com almoço: R$ 65... espera!
 ```
 
-❗ **CORREÇÃO**: O banner mostra R$ 80 (base 40 + almoço 15... não, isso dá 55!)
+❗ **CORREÇÃO**: O banner mostra R$ 80 (base 40 + almoço 25... não, isso dá 65!)
 
 ### Valores Reais Configurados:
 
 ```
-Lote 1: Base R$ 40 + Almoço R$ 15 = Total R$ 55 (não R$ 80!)
-Lote 2: Base R$ 50 + Almoço R$ 15 = Total R$ 65 (não R$ 90!)
-Lote 3: Base R$ 60 + Almoço R$ 15 = Total R$ 75 (não R$ 100!)
+Lote 1: Base R$ 40 + Almoço R$ 25 = Total R$ 65 (não R$ 80!)
+Lote 2: Base R$ 50 + Almoço R$ 25 = Total R$ 75 (não R$ 90!)
+Lote 3: Base R$ 60 + Almoço R$ 25 = Total R$ 85 (não R$ 100!)
 ```
 
 ❗ **IMPORTANTE**: Os valores no SQL precisam ser ajustados se você quer:
@@ -203,15 +203,15 @@ Se você quer que Lote 1 seja R$ 80 **incluindo almoço**:
 
 ```sql
 UPDATE lotes_config
-SET preco_base = 65.00, preco_almoco = 15.00
+SET preco_base = 65.00, preco_almoco = 25.00
 WHERE numero_lote = 1;
 
 UPDATE lotes_config
-SET preco_base = 75.00, preco_almoco = 15.00
+SET preco_base = 75.00, preco_almoco = 25.00
 WHERE numero_lote = 2;
 
 UPDATE lotes_config
-SET preco_base = 85.00, preco_almoco = 15.00
+SET preco_base = 85.00, preco_almoco = 25.00
 WHERE numero_lote = 3;
 ```
 
@@ -219,15 +219,15 @@ Ou se R$ 80/90/100 é **apenas inscrição** (almoço à parte):
 
 ```sql
 UPDATE lotes_config
-SET preco_base = 80.00, preco_almoco = 15.00
+SET preco_base = 80.00, preco_almoco = 25.00
 WHERE numero_lote = 1;
 
 UPDATE lotes_config
-SET preco_base = 90.00, preco_almoco = 15.00
+SET preco_base = 90.00, preco_almoco = 25.00
 WHERE numero_lote = 2;
 
 UPDATE lotes_config
-SET preco_base = 100.00, preco_almoco = 15.00
+SET preco_base = 100.00, preco_almoco = 25.00
 WHERE numero_lote = 3;
 ```
 

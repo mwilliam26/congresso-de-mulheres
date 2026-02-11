@@ -14,7 +14,6 @@ Antes de configurar as URLs, você precisa criar as tabelas no Supabase.
 
 1. **Acesse o Supabase SQL Editor**
 2. **Opção A - Script Completo (Recomendado):**
-
    - Abra o arquivo `database/INSTALAR_COMPLETO.sql`
    - Copie TODO o conteúdo
    - Cole no SQL Editor do Supabase
@@ -95,7 +94,7 @@ ORDER BY numero_lote;
 | -------------- | ------- | ------------------------------------------- |
 | `numero_lote`  | INTEGER | Número do lote (1, 2 ou 3)                  |
 | `preco_base`   | DECIMAL | Valor base da inscrição (sem almoço)        |
-| `preco_almoco` | DECIMAL | Valor adicional do almoço (padrão R$ 15,00) |
+| `preco_almoco` | DECIMAL | Valor adicional do almoço (padrão R$ 25,00) |
 | `checkout_url` | TEXT    | Link do checkout do Mercado Pago            |
 | `ativo`        | BOOLEAN | Se o lote está ativo no momento             |
 

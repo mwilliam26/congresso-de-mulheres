@@ -18,17 +18,17 @@ INSERT INTO config_sistema (chave, valor)
 VALUES
   -- Lote 1
   ('lote_1_preco_base', '40.00'),
-  ('lote_1_preco_almoco', '15.00'),
+  ('lote_1_preco_almoco', '25.00'),
   ('lote_1_checkout_url', 'https://mpago.la/2Kf6yov'),
 
   -- Lote 2
   ('lote_2_preco_base', '50.00'),
-  ('lote_2_preco_almoco', '15.00'),
+  ('lote_2_preco_almoco', '25.00'),
   ('lote_2_checkout_url', 'CONFIGURE_URL_LOTE_2'),
 
   -- Lote 3
   ('lote_3_preco_base', '60.00'),
-  ('lote_3_preco_almoco', '15.00'),
+  ('lote_3_preco_almoco', '25.00'),
   ('lote_3_checkout_url', 'CONFIGURE_URL_LOTE_3'),
 
   -- Lote ativo (padrão: 1)
@@ -44,7 +44,6 @@ ON CONFLICT (chave) DO UPDATE SET valor = EXCLUDED.valor;
 
 1. Acesse sua conta do Mercado Pago
 2. Crie 3 links de pagamento:
-
    - **Lote 1**: R$ 55,00 (ou R$ 40 se sem almoço)
    - **Lote 2**: R$ 65,00 (ou R$ 50 se sem almoço)
    - **Lote 3**: R$ 75,00 (ou R$ 60 se sem almoço)
@@ -83,13 +82,13 @@ ORDER BY chave;
 
 ```
 lote_1_checkout_url | https://mpago.la/...
-lote_1_preco_almoco | 15.00
+lote_1_preco_almoco | 25.00
 lote_1_preco_base   | 40.00
 lote_2_checkout_url | https://mpago.la/...
-lote_2_preco_almoco | 15.00
+lote_2_preco_almoco | 25.00
 lote_2_preco_base   | 50.00
 lote_3_checkout_url | https://mpago.la/...
-lote_3_preco_almoco | 15.00
+lote_3_preco_almoco | 25.00
 lote_3_preco_base   | 60.00
 lote_ativo          | 1
 ```

@@ -11,7 +11,7 @@ const supabaseAdmin = createClient(
       autoRefreshToken: false,
       persistSession: false,
     },
-  }
+  },
 );
 
 export async function POST(request: NextRequest) {
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
         headers: {
           Authorization: `Bearer ${mercadoPagoAccessToken}`,
         },
-      }
+      },
     );
 
     const payment = paymentResponse.data;
@@ -68,14 +68,14 @@ export async function POST(request: NextRequest) {
       .from("pedidos")
       .select("*")
       .or(
-        `mercado_pago_preference_id.eq.${preferenceId},mercado_pago_payment_id.eq.${paymentId}`
+        `mercado_pago_preference_id.eq.${preferenceId},mercado_pago_payment_id.eq.${paymentId}`,
       );
 
     if (searchError) {
       console.error("Erro ao buscar pedido:", searchError);
       return NextResponse.json(
         { error: "Erro ao buscar pedido" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -100,20 +100,28 @@ export async function POST(request: NextRequest) {
         ) {
           const pedido = pedidosPorEmail[0];
 
+          // Preparar dados de atualização
+          const updateData: any = {
+            status_pagamento: statusPagamento,
+            mercado_pago_payment_id: paymentId.toString(),
+          };
+
+          // Preencher data_compra quando pagamento for aprovado
+          if (statusPagamento === "Pago") {
+            updateData.data_compra = new Date().toISOString();
+          }
+
           // Atualizar pedido
           const { error: updateError } = await supabaseAdmin
             .from("pedidos")
-            .update({
-              status_pagamento: statusPagamento,
-              mercado_pago_payment_id: paymentId.toString(),
-            })
+            .update(updateData)
             .eq("id", pedido.id);
 
           if (updateError) {
             console.error("Erro ao atualizar pedido:", updateError);
             return NextResponse.json(
               { error: "Erro ao atualizar pedido" },
-              { status: 500 }
+              { status: 500 },
             );
           }
 
@@ -131,19 +139,27 @@ export async function POST(request: NextRequest) {
     // Atualizar o primeiro pedido encontrado
     const pedido = pedidos[0];
 
+    // Preparar dados de atualização
+    const updateData: any = {
+      status_pagamento: statusPagamento,
+      mercado_pago_payment_id: paymentId.toString(),
+    };
+
+    // Preencher data_compra quando pagamento for aprovado
+    if (statusPagamento === "Pago") {
+      updateData.data_compra = new Date().toISOString();
+    }
+
     const { error: updateError } = await supabaseAdmin
       .from("pedidos")
-      .update({
-        status_pagamento: statusPagamento,
-        mercado_pago_payment_id: paymentId.toString(),
-      })
+      .update(updateData)
       .eq("id", pedido.id);
 
     if (updateError) {
       console.error("Erro ao atualizar pedido:", updateError);
       return NextResponse.json(
         { error: "Erro ao atualizar pedido" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -152,7 +168,7 @@ export async function POST(request: NextRequest) {
     console.error("Erro no webhook:", error);
     return NextResponse.json(
       { error: error.message || "Erro ao processar webhook" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
