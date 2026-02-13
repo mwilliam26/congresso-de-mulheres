@@ -42,14 +42,18 @@ export async function POST(request: NextRequest) {
     // Inicializar cliente servidor do Supabase (service role) para inserções seguras
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
     const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
-    let serviceSupabase: ReturnType<typeof createClient> | null = null;
-    if (supabaseUrl && supabaseServiceKey) {
-      serviceSupabase = createClient(supabaseUrl, supabaseServiceKey);
-    } else {
+
+    if (!supabaseUrl || !supabaseServiceKey) {
       console.warn(
         "⚠️ SUPABASE_SERVICE_ROLE_KEY ou NEXT_PUBLIC_SUPABASE_URL ausente — inserção server-side não estará disponível",
       );
+      return NextResponse.json(
+        { error: "Inserção não permitida no servidor" },
+        { status: 500 },
+      );
     }
+
+    const serviceSupabase = createClient<any>(supabaseUrl, supabaseServiceKey);
 
     console.log("📥 Dados recebidos:", {
       pedido_id: incomingPedidoId,
@@ -58,17 +62,10 @@ export async function POST(request: NextRequest) {
       valor_total,
       lote,
       inclui_almoco,
-      serverInsert: !!serviceSupabase,
+      serverInsert: true,
     });
 
     // SEMPRE criar o pedido aqui no servidor primeiro para garantir ID correto
-    if (!serviceSupabase) {
-      return NextResponse.json(
-        { error: "Inserção não permitida no servidor" },
-        { status: 500 },
-      );
-    }
-
     // Validar dados obrigatórios ANTES de inserir
     if (
       !incomingNome ||
