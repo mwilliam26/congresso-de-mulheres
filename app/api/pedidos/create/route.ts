@@ -31,7 +31,7 @@ async function createMercadoPagoPreference(data: {
     items: [
       {
         id: data.lote_id.toString(),
-        title: `Inscrição Missão de Carnaval 2025 - Lote ${data.lote_id}`,
+        title: `Inscrição Congresso de Mulheres - Lote ${data.lote_id}`,
         description: `Ingresso: R$ ${data.preco_base.toFixed(2)}${
           data.inclui_almoco
             ? ` + Almoço: R$ ${data.preco_almoco.toFixed(2)}`
@@ -48,7 +48,7 @@ async function createMercadoPagoPreference(data: {
     },
     external_reference: data.pedido_id,
     notification_url: `${appUrl}/api/webhook/mercadopago`,
-    statement_descriptor: "MISSAO CARNAVAL 2025",
+    statement_descriptor: "CONGRESSO DE MULHERES",
   };
 
   // Adicionar apenas back_urls, sem auto_return

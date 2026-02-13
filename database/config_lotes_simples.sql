@@ -6,20 +6,23 @@
 -- Inserir configurações dos lotes na tabela config_sistema
 -- Formato JSON para armazenar múltiplas configurações
 
--- Lote 1: R$ 40 (base) + R$ 25 (almoço)
+-- Lote 1: R$ 80 (base) + R$ 25 (almoço)
 INSERT INTO config_sistema (chave, valor)
 VALUES 
-  ('lote_1_preco_base', '40.00'),
+  ('lote_1_preco_base', '80.00'),
   ('lote_1_preco_almoco', '25.00'),
-  ('lote_1_checkout_url', 'https://mpago.la/2Kf6yov'),
-  
-  ('lote_2_preco_base', '50.00'),
+  ('lote_1_checkout_url_base', 'https://mpago.li/1tmSGGZ'),
+  ('lote_1_checkout_url_almoco', 'https://mpago.la/2WfnHaU'),
+
+  ('lote_2_preco_base', '90.00'),
   ('lote_2_preco_almoco', '25.00'),
-  ('lote_2_checkout_url', 'CONFIGURE_URL_LOTE_2'),
-  
-  ('lote_3_preco_base', '60.00'),
+  ('lote_2_checkout_url_base', 'https://mpago.la/2LiHv88'),
+  ('lote_2_checkout_url_almoco', 'https://mpago.la/1yKkmFH'),
+
+  ('lote_3_preco_base', '100.00'),
   ('lote_3_preco_almoco', '25.00'),
-  ('lote_3_checkout_url', 'CONFIGURE_URL_LOTE_3'),
+  ('lote_3_checkout_url_base', 'https://mpago.la/2pg4Hdk'),
+  ('lote_3_checkout_url_almoco', 'https://mpago.la/18a4pfS'),
   
   ('lote_ativo', '1')
 ON CONFLICT (chave) DO UPDATE SET valor = EXCLUDED.valor;
