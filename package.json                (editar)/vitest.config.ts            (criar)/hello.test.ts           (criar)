@@ -1,0 +1,24 @@
+{
+  "devDependencies": {
+    "vitest": "^0.0.0"
+  },
+  "scripts": {
+    "test": "vitest"
+  }
+}
+
+import { defineConfig } from 'vitest/config'
+
+export default defineConfig({
+  test: {
+    environment: 'node'
+  }
+})
+
+import { describe, it, expect } from 'vitest'
+
+describe('hello world test', () => {
+  it('should return true', () => {
+    expect(true).toBe(true)
+  })
+})
